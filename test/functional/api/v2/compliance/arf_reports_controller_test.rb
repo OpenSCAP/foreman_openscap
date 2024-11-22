@@ -436,6 +436,30 @@ class Api::V2::Compliance::ArfReportsControllerTest < ActionController::TestCase
     assert_equal report.id, response['results'].first["id"].to_i
   end
 
+  test "should order by compliance_[failed|passed|othered]" do
+    reports_cleanup
+    policy = FactoryBot.create(:policy)
+    create_arf_report_for_search({ "passed" => 4, "othered" => 0, "failed" => 1 }, policy)
+    create_arf_report_for_search({ "passed" => 1, "othered" => 0, "failed" => 0 }, policy)
+    create_arf_report_for_search({ "passed" => 15, "othered" => 9, "failed" => 0 }, policy)
+    create_arf_report_for_search({ "passed" => 2, "othered" => 3, "failed" => 7 }, policy)
+
+    get :index, :params => { :order => "compliance_failed DESC" }, :session => set_session_user
+    assert_response :success
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_equal 7, response['results'].first['failed']
+
+    get :index, :params => { :order => "compliance_passed DESC" }, :session => set_session_user
+    assert_response :success
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_equal 2, response['results'].first['passed']
+
+    get :index, :params => { :order => "compliance_othered DESC" }, :session => set_session_user
+    assert_response :success
+    response = ActiveSupport::JSON.decode(@response.body)
+    assert_equal 3, response['results'].first['othered']
+  end
+
   private
 
   def reports_cleanup
