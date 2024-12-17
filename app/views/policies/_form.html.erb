@@ -24,6 +24,7 @@
     <div class="tab-pane" id="primary">
       <%= text_f(f, :name) %>
       <%= textarea_f(f, :description, :rows => :auto ) %>
+      <%= counter_f(f, :treshold) %>
     </div>
     <div class="tab-pane" id="scap_content">
       <%= scap_content_selector(f) %>

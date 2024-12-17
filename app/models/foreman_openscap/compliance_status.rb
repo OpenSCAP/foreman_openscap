@@ -49,7 +49,6 @@ module ForemanOpenscap
     def to_status(options = {})
       latest_reports = host.policies.map { |p| host.last_report_for_policy p }.flatten
       return INCOMPLIANT if latest_reports.any?(&:failed?)
-      return INCONCLUSIVE if latest_reports.any?(&:othered?)
       COMPLIANT
     end
   end

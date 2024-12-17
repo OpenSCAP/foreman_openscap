@@ -16,10 +16,6 @@ module ForemanOpenscap
         search_by_policy_results policy_name, &:failed
       end
 
-      def search_by_inconclusive_with(_key, _operator, policy_name)
-        search_by_policy_results policy_name, &:othered
-      end
-
       def search_by_policy_results(policy_name, &selection)
         scope = ArfReport.of_policy(Policy.find_by(:name => policy_name).id)
                          .instance_eval(&selection)
@@ -67,8 +63,6 @@ module ForemanOpenscap
                   ArfReport.passed
                 when 'incompliant'
                   ArfReport.failed
-                when 'inconclusive'
-                  ArfReport.othered
                 end
         query_conditions_from_scope scope
       end
@@ -135,9 +129,6 @@ module ForemanOpenscap
       scoped_search :relation => :policy, :on => :name, :complete_value => true, :rename => :not_comply_with,
                     :only_explicit => true, :operators => ['= '], :ext_method => :search_by_not_comply_with
 
-      scoped_search :relation => :policy, :on => :name, :complete_value => true, :rename => :inconclusive_with,
-                    :only_explicit => true, :operators => ['= '], :ext_method => :search_by_inconclusive_with
-
       scoped_search :relation => :openscap_proxy, :on => :name, :complete_value => true, :only_explicit => true, :rename => :openscap_proxy
 
       scoped_search :relation => :sources, :on => :value, :rename => :xccdf_rule_name,
@@ -155,9 +146,8 @@ module ForemanOpenscap
       scoped_search :on => :status, :rename => :compliance_status, :operators => ['= '],
                            :ext_method => :search_by_compliance_status,
                            :complete_value => { :compliant => ::ForemanOpenscap::ComplianceStatus::COMPLIANT,
-                                                :incompliant => ::ForemanOpenscap::ComplianceStatus::INCOMPLIANT,
-                                                :inconclusive => ::ForemanOpenscap::ComplianceStatus::INCONCLUSIVE },
-                           :validator => ->(value) { ['compliant', 'incompliant', 'inconclusive'].reduce(false) { |memo, item| memo || (item == value) } }
+                                                :incompliant => ::ForemanOpenscap::ComplianceStatus::INCOMPLIANT },
+                           :validator => ->(value) { ['compliant', 'incompliant'].reduce(false) { |memo, item| memo || (item == value) } }
     end
   end
 end

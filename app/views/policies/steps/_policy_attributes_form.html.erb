@@ -2,4 +2,5 @@
   <%= wizard_header @policy.step_index, *translate_steps(@policy) %>
   <%= text_f(f, :name, :required => true) %>
   <%= text_f(f, :description, :size => "col-md-8" ) %>
+  <%= counter_f(f, :treshold) %>
 </div>

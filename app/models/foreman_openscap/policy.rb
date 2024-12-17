@@ -31,6 +31,8 @@ module ForemanOpenscap
 
     validates :name, :presence => true, :uniqueness => true, :length => { :maximum => 255 },
                      :if => Proc.new { |policy| policy.should_validate?('Policy Attributes') }
+    validates :treshold, :presence => true, :if => Proc.new { |policy| policy.should_validate?('Policy Attributes') }
+
     validates :period, :inclusion => { :in => %w[weekly monthly custom], :message => _('is not a valid value') },
                        :if => Proc.new { |policy| policy.should_validate?('Schedule') }
     validates :deploy_by, :inclusion => { :in => Policy.deploy_by_variants },
@@ -39,9 +41,10 @@ module ForemanOpenscap
     validates :scap_content_id, presence: true, if: Proc.new { |policy| policy.should_validate?('SCAP Content') }
     validate :matching_content_profile, if: Proc.new { |policy| policy.should_validate?('SCAP Content') }
 
-    validate :valid_tailoring, :valid_tailoring_profile, :no_mixed_deployments
+    validate :valid_tailoring, :valid_tailoring_profile, :no_mixed_deployments, :treshold_value
     validate :valid_cron_line, :valid_weekday, :valid_day_of_month, :if => Proc.new { |policy| policy.should_validate?('Schedule') }
     after_save :assign_policy_to_hostgroups
+    after_save :refresh_compliance_status
     # before_destroy - ensure that the policy has no hostgroups, or classes
 
     default_scope do
@@ -105,6 +108,17 @@ module ForemanOpenscap
 
     def hosts=(hosts)
       host_ids = hosts.map(&:id).map(&:to_s)
+    end
+
+    def all_hosts
+      hg_ids = hostgroups.flat_map(&:subtree_ids).uniq
+      (Host.where(:hostgroup_id => hg_ids) + hosts).uniq
+    end
+
+    def refresh_host_statuses
+      all_hosts.map do |host|
+        host.refresh_statuses([HostStatus.find_status_by_humanized_name("compliance")])
+      end
     end
 
     def step_to_i(step_name)
@@ -267,6 +281,17 @@ module ForemanOpenscap
           errors.add(:base, _("cannot assign to %s, all assigned policies must be deployed in the same way, check 'deploy by' for each assigned policy") % assetable.name)
         end
       end
+    end
+
+    def treshold_value
+      if (100 < treshold || treshold < 0) && should_validate?('Policy Attributes')
+        errors.add(:treshold, _("must be between 0 and 100"))
+      end
+    end
+
+    def refresh_compliance_status
+      return if id_previously_changed?
+      refresh_host_statuses
     end
   end
 end
