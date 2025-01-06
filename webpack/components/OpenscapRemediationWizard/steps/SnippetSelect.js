@@ -113,7 +113,7 @@ const SnippetSelect = () => {
               ouiaId="snippet-select"
               isRequired
               value={snippet}
-              onChange={value => setSnippet(value)}
+              onChange={(_event, value) => setSnippet(value)}
               aria-label="FormSelect Input"
             >
               <FormSelectOption

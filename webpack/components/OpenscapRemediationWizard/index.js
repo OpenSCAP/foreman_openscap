@@ -1,7 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button, Wizard } from '@patternfly/react-core';
+import {
+	Button
+} from '@patternfly/react-core';
+import {
+	Wizard
+} from '@patternfly/react-core/deprecated';
 
 import { sprintf, translate as __ } from 'foremanReact/common/I18n';
 import { API_OPERATIONS, get } from 'foremanReact/redux/API';
