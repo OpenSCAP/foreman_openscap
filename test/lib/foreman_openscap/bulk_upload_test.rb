@@ -60,4 +60,20 @@ class BulkUploadTest < ActiveSupport::TestCase
       upload.upload_from_scap_guide
     end
   end
+
+  test 'should upload new files from guide' do
+    upload = ForemanOpenscap::BulkUpload.new
+    upload.stubs(:package_installed?).returns(true)
+    upload.stubs(:files_from_guide).returns(["#{ForemanOpenscap::Engine.root}/test/files/scap_contents/cs9-old/ssg-cs9-ds.xml"])
+    assert_difference('ForemanOpenscap::ScapContent.count', 1) do
+      upload.upload_from_scap_guide
+    end
+    old_digest = ForemanOpenscap::ScapContent.last.digest
+    upload.stubs(:files_from_guide).returns(["#{ForemanOpenscap::Engine.root}/test/files/scap_contents/cs9-new/ssg-cs9-ds.xml"])
+    assert_no_difference('ForemanOpenscap::ScapContent.count') do
+      upload.upload_from_scap_guide
+    end
+    new_digest = ForemanOpenscap::ScapContent.last.digest
+    refute_equal old_digest, new_digest
+  end
 end
