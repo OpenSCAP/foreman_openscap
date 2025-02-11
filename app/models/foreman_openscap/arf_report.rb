@@ -53,11 +53,14 @@ module ForemanOpenscap
 
     scope :failed, lambda { where("(#{report_status_column} >> #{bit_mask 'failed'}) > 0") }
     scope :not_failed, lambda { where("(#{report_status_column} >> #{bit_mask 'failed'}) = 0") }
+    scope :select_compliance_failed, lambda { select("reports.*, (#{report_status_column} >> #{bit_mask 'failed'}) as compliance_failed") }
 
     scope :othered, lambda { where("(#{report_status_column} >> #{bit_mask 'othered'}) > 0").merge(not_failed) }
     scope :not_othered, lambda { where("(#{report_status_column} >> #{bit_mask 'othered'}) = 0") }
+    scope :select_compliance_othered, lambda { select("reports.*, (#{report_status_column} >> #{bit_mask 'othered'}) as compliance_othered") }
 
     scope :passed, lambda { where("(#{report_status_column} >> #{bit_mask 'passed'}) > 0").merge(not_failed).merge(not_othered) }
+    scope :select_compliance_passed, lambda { select("reports.*, (#{report_status_column} >> #{bit_mask 'passed'}) as compliance_passed") }
 
     scope :by_rule_result, lambda { |rule_name, rule_result| joins(:sources).where(:sources => { :value => rule_name }, :logs => { :result => rule_result }) }
 

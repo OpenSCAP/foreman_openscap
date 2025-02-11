@@ -37,4 +37,13 @@ class ArfReportsControllerTest < ActionController::TestCase
     get :download_html, :params => { :id => arf_report.id }, :session => set_session_user
     assert_equal report_html, @response.body
   end
+
+  test "should order arf reports by compliance_[failed|passed|othered]" do
+    get :index, params: { order: "compliance_failed DESC" }, :session => set_session_user
+    assert_response :success
+    get :index, params: { order: "compliance_passed DESC" }, :session => set_session_user
+    assert_response :success
+    get :index, params: { order: "compliance_othered DESC" }, :session => set_session_user
+    assert_response :success
+  end
 end
