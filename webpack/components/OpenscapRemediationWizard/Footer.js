@@ -1,9 +1,11 @@
 import React from 'react';
 import {
-  Button,
-  WizardFooter,
-  WizardContextConsumer,
+	Button
 } from '@patternfly/react-core';
+import {
+	WizardFooter,
+	WizardContextConsumer
+} from '@patternfly/react-core/deprecated';
 import { translate as __ } from 'foremanReact/common/I18n';
 import { WIZARD_TITLES } from './constants';
 

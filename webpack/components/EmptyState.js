@@ -39,7 +39,7 @@ const EmptyState = ({
   ouiaEmptyStateTitleId,
 }) => (
   <Bullseye>
-    <PfEmptyState variant={EmptyStateVariant.small}>
+    <PfEmptyState variant={EmptyStateVariant.sm}>
       <EmptyStateIcon error={!!error} search={search} lock={lock} />
       <Title ouiaId={ouiaEmptyStateTitleId} headingLevel="h2" size="lg">
         {title}

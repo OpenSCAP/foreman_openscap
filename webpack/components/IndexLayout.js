@@ -19,7 +19,7 @@ const IndexLayout = ({ pageTitle, children, contentWidthSpan }) => (
     </Helmet>
     <ToastsList />
     <Grid className="scap-page-grid">
-      <GridItem span={12} className="pf-u-pb-xl">
+      <GridItem span={12} className="pf-v5-u-pb-xl">
         <TextContent>
           <Text ouiaId="oscap-index-title" component={TextVariants.h1}>
             {pageTitle}

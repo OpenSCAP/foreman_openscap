@@ -152,7 +152,7 @@ const ReviewHosts = () => {
           if (!isSelecting) setIsAllHostsSelected(false);
         },
         isSelected: rowData.id === hostId || isSelected(rowData.id),
-        disable: rowData.id === hostId || false,
+        isDisabled: rowData.id === hostId || false,
       }}
     />
   );

@@ -161,7 +161,7 @@ const ReviewRemediation = () => {
                   label={__('Reboot the system(s)')}
                   name="reboot-checkbox"
                   isChecked={isRebootSelected}
-                  onChange={selected => setIsRebootSelected(selected)}
+                  onChange={(_event, selected) => setIsRebootSelected(selected)}
                 />
               </GridItem>
             )}

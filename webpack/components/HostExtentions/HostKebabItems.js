@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { DropdownItem } from '@patternfly/react-core';
+import {
+	DropdownItem
+} from '@patternfly/react-core/deprecated';
 import { SecurityIcon } from '@patternfly/react-icons';
 import { selectAPIResponse } from 'foremanReact/redux/API/APISelectors';
 import { useAPI } from 'foremanReact/common/hooks/API/APIHooks';
